@@ -56,7 +56,7 @@ class db_server(object):
 
 if __name__ == '__main__':
     PORT = 6969
-    cred = credentials.Certificate("mobaitestdata-6d9be0366326.json")
+    cred = credentials.Certificate("mobaitestdata-firebase-adminsdk-qknjq-7204e01919.json")
     firebase_admin.initialize_app(cred)
     db = firestore.client()
     if not (try_open_db(db)): quit()
