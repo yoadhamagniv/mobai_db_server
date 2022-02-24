@@ -13,6 +13,7 @@ def try_open_db(db):
         print("db doesn't exist")
         return False
 
+
 def add_state(camera_id, state, start_time, end_time, db):
     try:
         doc_ref = db.collection(camera_id).document(f"{start_time}")
@@ -36,6 +37,7 @@ def add_curr_state(camera_id, state, start_time, db):
     except:
         return "FAILED"
 
+
 def get_curr_state(camera_id, db):
     schedule_ref = db.collection(camera_id)
     schedule = schedule_ref.stream()
@@ -44,12 +46,14 @@ def get_curr_state(camera_id, db):
             return (doc.to_dict())
     return "NONE"
 
+
 def is_username_valid(username, db):
     ref = db.collection(username).stream()
     for doc in ref:
         if doc.id == "user_info":
             return "YES"
     return "NO"
+
 
 def does_password_match(username, password, db):
     schedule_ref = db.collection(username)
@@ -60,6 +64,7 @@ def does_password_match(username, password, db):
                 sorted_items = sorted(list(doc.to_dict().items()),key=lambda x: x[0])
                 return "YES#" + '#'.join([item[1] for item in sorted_items])
     return "NO"
+
 
 def add_user(camera_id, password, email, baby_birthdate, babyName, db): #sign up
     try:
@@ -80,6 +85,7 @@ def add_user(camera_id, password, email, baby_birthdate, babyName, db): #sign up
         return "OK"
     except:
         return "FAILED"
+
 
 def get_schedule_for_time_span(camera_id, time1, time2, db):
     last_state = ""
