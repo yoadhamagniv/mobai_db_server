@@ -26,6 +26,7 @@ def add_state(camera_id, state, start_time, end_time, db):
     except:
         return "failed"
 
+
 def add_curr_state(camera_id, state, start_time, db):
     try:
         doc_ref = db.collection(camera_id).document("CurrentState")
@@ -96,7 +97,7 @@ def get_schedule_for_time_span(camera_id, time1, time2, db):
         if f'{doc.id}' not in ['CurrentState',"user_info"]:
             dodict = doc.to_dict()
             curr_state = dodict.get("state")
-            if (curr_state not in list(states.keys())):
+            if curr_state not in list(states.keys()):
                 states[curr_state] = [(doc.id, dodict.get('end_time'))]
             else:
                 states[curr_state].append((doc.id, dodict.get('end_time')))
