@@ -26,28 +26,42 @@ class db_server(object):
             try:
                 data = client.recv(size).decode("utf-8")
                 data = data.split('#')
-                print(data)
+                #print(data)
                 if data[0]=="200": #asking for schedule in timespan
-                    response = get_schedule_for_time_span(data[1],int(data[2]),int(data[3]),self.db)
-                    client.sendall(str(response).encode('utf-8'))
-                    data = client.recv(size).decode("utf-8").split('#')
-                    if data[0] == "100":
-                        client.close()
-                        return False
+                    while True:
+                        response = get_schedule_for_time_span(data[1],int(data[2]),int(data[3]),self.db)
+                        client.sendall(str(response).encode('utf-8')) #{'Sleep': [('1643810131', 1643810156), ('1643810162', 1643810193)], 'Awake': [('1643810156', 1643810162)]}
+                        data = client.recv(size).decode("utf-8").split('#')
+                        if data[0] == "100":
+                            break
+                if data[0]=="250": #checks if username exists
+                    while True:
+                        response = does_username_exist(data[1],self.db)
+                        client.sendall(str(response).encode('utf-8')) #YES or NO
+                        data = client.recv(size).decode("utf-8").split('#')
+                        if data[0] == "100":
+                            break
+                if data[0]=="275": #checks if username and password match
+                    while True:
+                        response = does_password_match(data[1],data[2],self.db)
+                        client.sendall(str(response).encode('utf-8')) #YES or NO
+                        data = client.recv(size).decode("utf-8").split('#')
+                        if data[0] == "100":
+                            break
                 if data[0]=="300": #wanting to sign up
-                    response = add_user(data[1],data[2],data[3],data[4],data[5],self.db) #camera_id, password, email, baby_birthdate, db
-                    client.sendall(str(response).encode('utf-8'))
-                    data = client.recv(size).decode("utf-8").split('#')
-                    if data[0] == "100":
-                        client.close()
-                        return False
+                    while True:
+                        response = add_user(data[1],data[2],data[3],data[4],data[5],data[6],self.db) #camera_id, password, email, baby_birthdate, babyname, db
+                        client.sendall(str(response).encode('utf-8')) #OK or FAILED
+                        data = client.recv(size).decode("utf-8").split('#')
+                        if data[0] == "100":
+                            break
                 if data[0]=="350": #asking for current state
-                    response = get_curr_state(data[1],self.db) #camera_id, db
-                    client.sendall(str(response).encode('utf-8'))
-                    data = client.recv(size).decode("utf-8").split('#')
-                    if data[0] == "100":
-                        client.close()
-                        return False
+                    while True:
+                        response = get_curr_state(data[1],self.db) #camera_id, db
+                        client.sendall(str(response).encode('utf-8'))#{'start_time': 1643813869, 'state': 'Sleep'}
+                        data = client.recv(size).decode("utf-8").split('#')
+                        if data[0] == "100":
+                            break
             except:
                 client.close()
                 return False

@@ -14,19 +14,27 @@ def try_open_db(db):
         return False
 
 def add_state(camera_id, state, start_time, end_time, db):
-    doc_ref = db.collection(camera_id).document(f"{start_time}")
-    doc_ref.set({
-        'state': state,
-        'start_time': start_time,
-        'end_time': end_time,
-    })
+    try:
+        doc_ref = db.collection(camera_id).document(f"{start_time}")
+        doc_ref.set({
+            'state': state,
+            'start_time': start_time,
+            'end_time': end_time,
+        })
+        return "OK"
+    except:
+        return "failed"
 
 def add_curr_state(camera_id, state, start_time, db):
-    doc_ref = db.collection(camera_id).document("CurrentState")
-    doc_ref.set({
-        'state': state,
-        'start_time': start_time,
-    })
+    try:
+        doc_ref = db.collection(camera_id).document("CurrentState")
+        doc_ref.set({
+            'state': state,
+            'start_time': start_time,
+        })
+        return "OK"
+    except:
+        return "FAILED"
 
 def get_curr_state(camera_id, db):
     schedule_ref = db.collection(camera_id)
@@ -34,28 +42,50 @@ def get_curr_state(camera_id, db):
     for doc in schedule:
         if doc.id == "CurrentState":
             return (doc.to_dict())
-    return "none"
+    return "NONE"
 
-def add_user(camera_id, password, email, baby_birthdate, db):#supposed to check if user already exists (return "ok" if not and "exists" if exists)
-    doc_ref = db.collection(camera_id).document("user info")
-    doc_ref.set({
-        'username/camera id': camera_id,
-        'password': password,
-        'email': email,
-        'baby birthdate': baby_birthdate
-    })
-    return "ok"
+def does_username_exist(username, db):
+    schedule_ref = db.collection(username)
+    schedule = schedule_ref.stream()
+    for doc in schedule:
+        if doc.id == "user_info":
+            return "YES"
+    return "NO"
+
+def does_password_match(username, password, db):
+    schedule_ref = db.collection(username)
+    schedule = schedule_ref.stream()
+    for doc in schedule:
+        if doc.id == "user_info":
+            if doc.to_dict()['password'] == password:
+                return "YES"
+    return "NO"
+
+def add_user(camera_id, password, email, baby_birthdate, babyName, db): #sign up
+    try:
+        doc_ref = db.collection(camera_id).document("user_info")
+        doc_ref.set({
+            'username/camera_id': camera_id,
+            'password': password,
+            'email': email,
+            'baby_birthdate': baby_birthdate,
+            'baby_name': babyName
+        })
+        return "OK"
+    except:
+        return "FAILED"
 
 def get_schedule_for_time_span(camera_id, time1, time2, db):
+    last_state = ""
     states = {}
     schedule_ref = db.collection(camera_id)
     schedule = schedule_ref.where('start_time', '>=', time1).where('start_time', '<=', time2).stream()
     for doc in schedule:
-        if f'{doc.id}' != 'CurrentState':
+        if f'{doc.id}' not in ['CurrentState',"user_info"]:
             dodict = doc.to_dict()
-            if (dodict.get("state") not in list(states.keys())):
-                states[dodict.get("state")] = [(doc.id, dodict.get('end_time'))]
+            curr_state = dodict.get("state")
+            if (curr_state not in list(states.keys())):
+                states[curr_state] = [(doc.id, dodict.get('end_time'))]
             else:
-                states[dodict.get("state")].append((doc.id, dodict.get('end_time')))
-
+                states[curr_state].append((doc.id, dodict.get('end_time')))
     return states
