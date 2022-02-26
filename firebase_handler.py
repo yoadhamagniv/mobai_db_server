@@ -101,4 +101,8 @@ def get_schedule_for_time_span(camera_id, time1, time2, db):
                 states[curr_state] = [(doc.id, dodict.get('end_time'))]
             else:
                 states[curr_state].append((doc.id, dodict.get('end_time')))
+        if len(states[curr_state])>1:
+            states[curr_state][-2] = states[curr_state][-2][0]
+    for x in states:
+        states[x] = str(states[x])
     return states
