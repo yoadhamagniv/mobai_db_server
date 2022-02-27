@@ -48,7 +48,8 @@ class db_server(object):
                     client.sendall((str(response) + ENDFIX).encode('utf-8'))  # {'start_time': 1643813869, 'state': 'Sleep'}
             except socket.error:
                 client.close()
-                print(f"close socket {address}")
+                print(f"closed socket {address}")
+                break
             except Exception as e:
                 print(e)
                 client.sendall(("error" + ENDFIX).encode('utf-8'))
@@ -61,6 +62,6 @@ if __name__ == '__main__':
     firebase_admin.initialize_app(cred)
     db = firestore.client()
     if not (try_open_db(db)): quit()
-    db_server('10.0.0.11', PORT, db).start()
+    db_server('172.23.160.1', PORT, db).start()
 
 # 200#{cameraId}#{time1}#{time2}

@@ -94,15 +94,16 @@ def get_schedule_for_time_span(camera_id, time1, time2, db):
     schedule_ref = db.collection(camera_id)
     schedule = schedule_ref.where('start_time', '>=', time1).where('start_time', '<=', time2).stream()
     for doc in schedule:
-        if f'{doc.id}' not in ['CurrentState',"user_info"]:
+        if f'{doc.id}' not in ['CurrentState',"user_info","is_set"]:
             dodict = doc.to_dict()
             curr_state = dodict.get("state")
             if curr_state not in list(states.keys()):
                 states[curr_state] = [(doc.id, dodict.get('end_time'))]
             else:
                 states[curr_state].append((doc.id, dodict.get('end_time')))
-        if len(states[curr_state])>1:
-            states[curr_state][-2] = states[curr_state][-2][0]
+            if len(states[curr_state])>1:
+                states[curr_state][-2] = states[curr_state][-2][0]
     for x in states:
         states[x] = str(states[x])
+    print(states)
     return states
