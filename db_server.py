@@ -62,6 +62,6 @@ if __name__ == '__main__':
     firebase_admin.initialize_app(cred)
     db = firestore.client()
     if not (try_open_db(db)): quit()
-    db_server('172.23.160.1', PORT, db).start()
+    db_server('172.22.208.1', PORT, db).start()
 
 # 200#{cameraId}#{time1}#{time2}
