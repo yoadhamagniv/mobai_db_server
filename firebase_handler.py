@@ -52,7 +52,7 @@ def get_camera_stream_ip(camera_id, db):
     schedule = schedule_ref.stream()
     for doc in schedule:
         if doc.id == "camera_ip":
-            return (doc.to_dict()["ip"])
+            return (doc.to_dict()["ip"]+","+doc.to_dict()["port"])
     return "NONE"
 
 
