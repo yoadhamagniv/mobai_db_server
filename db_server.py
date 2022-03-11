@@ -46,6 +46,9 @@ class db_server(object):
                 elif data[0] == "350":  # asking for current state
                     response = get_curr_state(data[1], self.db)  # camera_id, db
                     client.sendall((str(response) + ENDFIX).encode('utf-8'))  # {'start_time': 1643813869, 'state': 'Sleep'}
+                elif data[0] == "400":  # asking for stream ip
+                    response = get_camera_stream_ip(data[1], self.db)  # camera_id, db
+                    client.sendall((str(response) + ENDFIX).encode('utf-8'))  # 12.12.12.12
             except socket.error:
                 client.close()
                 print(f"closed socket {address}")

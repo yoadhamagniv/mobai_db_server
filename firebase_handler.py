@@ -47,6 +47,14 @@ def get_curr_state(camera_id, db):
             return (doc.to_dict())
     return "NONE"
 
+def get_camera_stream_ip(camera_id, db):
+    schedule_ref = db.collection(camera_id)
+    schedule = schedule_ref.stream()
+    for doc in schedule:
+        if doc.id == "camera_ip":
+            return (doc.to_dict()["ip"])
+    return "NONE"
+
 
 def is_username_valid(username, db):
     ref = db.collection(username).stream()
