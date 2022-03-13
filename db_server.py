@@ -33,7 +33,7 @@ class db_server(object):
                 print(data)
                 if data[0] == "200":  # asking for schedule in timespan
                     response = get_schedule_for_time_span(data[1], int(data[2]), int(data[3]), self.db)
-                    client.sendall((str(response) + ENDFIX).encode('utf-8'))  # {'Sleep': [('1643810131', 1643810156), ('1643810162', 1643810193)], 'Awake': [('1643810156', 1643810162)]}
+                    client.sendall((str(response) + ENDFIX).encode('utf-8'))  # {'Sleep': "['1643810131', ('1643810162', 1643810193)]", 'Awake': "[('1643810156', 1643810162)]"}
                 elif data[0] == "250":  # checks if username exists
                     response = is_username_valid(data[1], self.db)
                     client.sendall((str(response) + ENDFIX).encode('utf-8'))  # YES or NO

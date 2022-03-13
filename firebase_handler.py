@@ -102,7 +102,7 @@ def get_schedule_for_time_span(camera_id, time1, time2, db):
     schedule_ref = db.collection(camera_id)
     schedule = schedule_ref.where('start_time', '>=', time1).where('start_time', '<=', time2).stream()
     for doc in schedule:
-        if f'{doc.id}' not in ['CurrentState',"user_info","is_set"]:
+        if f'{doc.id}' not in ['CurrentState',"user_info","is_set","camera_ip"]:
             dodict = doc.to_dict()
             curr_state = dodict.get("state")
             if curr_state not in list(states.keys()):
